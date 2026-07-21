@@ -22,7 +22,7 @@
             name_en="STEM Town Reference"
             name_vi="STEM Town Tham khảo"
             icon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P//P8N/AAn7A/1B4a2eAAAAAElFTkSuQmCC"
-            model_path="{{BASE_URL}}/stem_town_model.glb">
+            model_path="https://raw.githubusercontent.com/rnd-kdi/testxml/main/stem_town_model.glb">
       </part>
     </subcategory>
   </category>

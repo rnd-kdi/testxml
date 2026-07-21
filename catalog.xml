@@ -17,5 +17,5 @@
             description_en="Custom 3D model converted from STL"
             version="1.0.0"
             author="Thuan"
-            configUrl="{{BASE_URL}}/stem_town_ext.xml" />
+            configUrl="https://raw.githubusercontent.com/rnd-kdi/testxml/main/stem_town_ext.xml/stem_town_ext.xml" />
 </toolbox>
