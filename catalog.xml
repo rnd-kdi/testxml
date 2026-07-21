@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  File "bọc ngoài" (catalog) — chỉ dùng NẾU ô nhập URL trong "Mục mở
+  rộng" của OhStem yêu cầu 1 catalog.xml thay vì nhận thẳng
+  stem_town_ext.xml. Thử stem_town_ext.xml trực tiếp trước;
+  nếu không được, dùng URL của file catalog.xml này thay thế.
+
+  CHỈ CẦN SỬA 1 CHỖ: thay {{BASE_URL}} giống như trong stem_town_ext.xml.
+-->
+<toolbox>
+  <category id="stem_town_custom"
+            name_vi="Mô hình STEM Town"
+            name_en="STEM Town Custom"
+            icon="🏗️"
+            colour="#2196F3"
+            description_vi="Mô hình 3D tự tạo từ file STL của Thuan"
+            description_en="Custom 3D model converted from STL"
+            version="1.0.0"
+            author="Thuan"
+            configUrl="{{BASE_URL}}/stem_town_ext.xml" />
+</toolbox>

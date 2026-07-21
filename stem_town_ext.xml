@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Theo đúng schema thật của OhStem Project Builder (xác nhận từ
+  technic_bricks_ext.xml gốc do OhStem cung cấp).
+
+  CHỈ CẦN SỬA 1 CHỖ: thay {{BASE_URL}} bên dưới bằng đường dẫn gốc
+  nơi bạn host 2 file trong folder này (ext.xml và .glb phải ở
+  CÙNG một nơi). Xem HUONG_DAN.md để biết cách lấy {{BASE_URL}}
+  tùy theo nơi bạn chọn host (GitHub / Netlify / Google Drive...).
+
+  Ví dụ nếu host trên GitHub, {{BASE_URL}} sẽ giống:
+  https://raw.githubusercontent.com/ten-tai-khoan/ten-repo/main
+-->
+<toolbox>
+  <category id="stem_town_custom"
+            name_en="STEM Town Custom"
+            name_vi="Mô hình STEM Town"
+            icon="🏗️"
+            colour="#2196F3">
+    <subcategory name_en="Reference Models" name_vi="Mô hình tham khảo" icon="📦">
+      <part type="Box"
+            name_en="STEM Town Reference"
+            name_vi="STEM Town Tham khảo"
+            icon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P//P8N/AAn7A/1B4a2eAAAAAElFTkSuQmCC"
+            model_path="{{BASE_URL}}/stem_town_model.glb">
+      </part>
+    </subcategory>
+  </category>
+</toolbox>
