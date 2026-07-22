@@ -12,12 +12,19 @@ CÁCH DÙNG:
 
 LƯU Ý VỀ MÀU SẮC:
     File STL chuẩn KHÔNG lưu thông tin màu sắc (giới hạn của định dạng).
-    Script này chỉ gán 1 màu đồng nhất (mặc định xám) cho toàn bộ model.
+    Một số công cụ CAD/slicer xuất STL binary theo phần mở rộng
+    "colored binary STL" (header bắt đầu bằng "COLOR="), script này sẽ
+    tự động đọc và dùng màu đó nếu có. Nếu STL không có màu nhúng sẵn,
+    bắt buộc phải truyền --color, nếu không script sẽ báo lỗi thay vì
+    âm thầm xuất model màu xám mặc định.
+
     Nếu cần model nhiều màu / vật liệu thật, hãy dùng Blender:
     Import STL -> gán màu/material -> Export glTF 2.0 (.glb), tick "Include Materials".
 """
 
 import argparse
+import os
+import struct
 import sys
 
 if sys.stdout.encoding is None or sys.stdout.encoding.lower() != "utf-8":
@@ -42,8 +49,69 @@ def hex_to_rgba(hex_color):
     return [r, g, b, 255]
 
 
-def convert(input_path, output_path, color_hex="c8c8c8", center=True):
+def detect_embedded_stl_color(input_path):
+    """
+    Đọc header của binary STL để tìm màu nhúng sẵn theo phần mở rộng
+    "colored binary STL" (VisCAM/SolidView/Magics): nếu 6 byte đầu
+    header là "COLOR=", 4 byte tiếp theo là RGBA mặc định cho cả model.
+
+    Trả về:
+        (rgba hoặc None, has_per_face_override: bool)
+    STL dạng ASCII hoặc binary không có phần mở rộng này -> (None, False).
+    """
+    with open(input_path, 'rb') as f:
+        data = f.read()
+
+    if len(data) < 84:
+        return None, False
+
+    header = data[:80]
+    num_tris = struct.unpack('<I', data[80:84])[0]
+    expected_size = 84 + 50 * num_tris
+    if expected_size != len(data):
+        # Không khớp kích thước binary STL chuẩn -> khả năng là ASCII STL
+        return None, False
+
+    global_rgba = None
+    if header[:6] in (b'COLOR=', b'COLOR ', b'color='):
+        r, g, b, a = header[6], header[7], header[8], header[9]
+        global_rgba = [r, g, b, a]
+
+    has_override = False
+    offset = 84
+    for _ in range(num_tris):
+        attr = struct.unpack('<H', data[offset + 48:offset + 50])[0]
+        if attr & 0x8000:
+            has_override = True
+            break
+        offset += 50
+
+    return global_rgba, has_override
+
+
+def convert(input_path, output_path, color_hex=None, center=True):
     print(f"Đang đọc: {input_path}")
+
+    detected_rgba, has_per_face_override = detect_embedded_stl_color(input_path)
+
+    if color_hex is not None:
+        rgba = hex_to_rgba(color_hex)
+        print(f"  Dùng màu do người dùng chỉ định: #{color_hex}")
+    elif detected_rgba is not None:
+        rgba = detected_rgba
+        print(f"  Phát hiện màu nhúng sẵn trong STL: rgba{tuple(rgba)}")
+    else:
+        raise ValueError(
+            "STL này không có màu nhúng sẵn và bạn chưa truyền --color. "
+            "Hãy chạy lại với --color <mã_hex>, ví dụ --color cc0000."
+        )
+
+    if has_per_face_override:
+        print("  CẢNH BÁO: STL có màu khác nhau theo từng mặt (per-face), "
+              "nhưng GLB xuất ra chỉ hỗ trợ 1 material đồng nhất -> toàn bộ "
+              "model sẽ dùng 1 màu duy nhất ở trên. Muốn giữ nhiều màu thật, "
+              "dùng Blender (xem HUONG_DAN.md).")
+
     mesh = trimesh.load(input_path)
 
     print(f"  Vertices: {len(mesh.vertices)}")
@@ -59,9 +127,19 @@ def convert(input_path, output_path, color_hex="c8c8c8", center=True):
         ])
         print("  Đã căn giữa X/Y và đặt đáy tại Z=0")
 
-    rgba = hex_to_rgba(color_hex)
-    mesh.visual = trimesh.visual.ColorVisuals(mesh, vertex_colors=rgba)
-    print(f"  Đã gán màu đồng nhất: #{color_hex}")
+    # Dùng PBR material (baseColorFactor) thay vì vertex colors — nhiều
+    # trình xem glTF (kể cả OhStem) không hiển thị vertex colors, chỉ
+    # đọc màu từ material.
+    material = trimesh.visual.material.PBRMaterial(
+        baseColorFactor=rgba,
+        metallicFactor=0.0,
+        roughnessFactor=0.8,
+    )
+    mesh.visual = trimesh.visual.TextureVisuals(material=material)
+
+    if os.path.exists(output_path):
+        os.remove(output_path)
+        print(f"  Đã xóa file cũ: {output_path}")
 
     mesh.export(output_path)
     print(f"Đã xuất: {output_path}")
@@ -71,10 +149,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Convert STL sang GLB cho OhStem")
     parser.add_argument("input", help="Đường dẫn file .stl đầu vào")
     parser.add_argument("output", help="Đường dẫn file .glb đầu ra")
-    parser.add_argument("--color", default="c8c8c8",
-                         help="Mã màu hex, không có dấu # (mặc định: c8c8c8 - xám)")
+    parser.add_argument("--color", default=None,
+                         help="Mã màu hex, không có dấu # (bắt buộc nếu STL "
+                              "không có màu nhúng sẵn)")
     parser.add_argument("--no-center", action="store_true",
                          help="Không tự động căn giữa / đặt đáy tại Z=0")
     args = parser.parse_args()
 
-    convert(args.input, args.output, args.color, center=not args.no_center)
+    try:
+        convert(args.input, args.output, args.color, center=not args.no_center)
+    except ValueError as e:
+        print(f"Lỗi: {e}")
+        sys.exit(1)
