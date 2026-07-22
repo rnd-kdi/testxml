@@ -36,6 +36,18 @@
             icon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P//P8N/AAn7A/1B4a2eAAAAAElFTkSuQmCC"
             model_path="https://raw.githubusercontent.com/rnd-kdi/testxml/main/c.glb">
       </part>
+      <part type="Box"
+            name_en="SP1 Tinkercad"
+            name_vi="SP1 Tinkercad"
+            icon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P//P8N/AAn7A/1B4a2eAAAAAElFTkSuQmCC"
+            model_path="https://raw.githubusercontent.com/rnd-kdi/testxml/main/sp1_tinkercad.glb">
+      </part>
+      <part type="Box"
+            name_en="SP2 Onshape"
+            name_vi="SP2 Onshape"
+            icon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P//P8N/AAn7A/1B4a2eAAAAAElFTkSuQmCC"
+            model_path="https://raw.githubusercontent.com/rnd-kdi/testxml/main/sp2_onshape.glb">
+      </part>
     </subcategory>
   </category>
 </toolbox>
