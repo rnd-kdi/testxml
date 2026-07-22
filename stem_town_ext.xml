@@ -30,6 +30,12 @@
             icon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P//P8N/AAn7A/1B4a2eAAAAAElFTkSuQmCC"
             model_path="https://raw.githubusercontent.com/rnd-kdi/testxml/main/b.glb">
       </part>
+      <part type="Box"
+            name_en="Model C"
+            name_vi="Mô hình C"
+            icon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P//P8N/AAn7A/1B4a2eAAAAAElFTkSuQmCC"
+            model_path="https://raw.githubusercontent.com/rnd-kdi/testxml/main/c.glb">
+      </part>
     </subcategory>
   </category>
 </toolbox>
